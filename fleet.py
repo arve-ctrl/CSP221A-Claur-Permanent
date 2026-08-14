@@ -9,7 +9,21 @@ import logging
 # Configure basic logging to terminal
 logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
 
-
+# --- 1.3 Decorators ---
+def log_action(func):
+    """Decorator that logs method execution and handles errors."""
+    @functools.wraps(func)
+    def wrapper(self, *args, **kwargs):
+        print(f"[LOG] {self.name} starting action: '{func.__name__}'")
+        try:
+            result = func(self, *args, **kwargs)
+            print(f"[LOG] {self.name} completed action successfully.")
+            return result
+        except Exception as e:
+            print(f"[LOG] {self.name} failed action with error: {e}")
+            raise
+    return wrapper
+    
 # --- 1.4 Custom Exception ---
 class InsufficientBatteryError(Exception):
     """Raised when a robot attempts a task without enough battery."""
@@ -75,7 +89,7 @@ class DroneRobot(Robot):
     def __init__(self, name: str, battery: int = 100, max_altitude: int = 500):
         super().__init__(name, battery)
         self.max_altitude = max_altitude
-
+    @log_action
     def perform_task(self, altitude: int = 100, **kwargs) -> str:
         # Task costs 15% battery
         battery_cost = 15
@@ -91,7 +105,7 @@ class CleaningRobot(Robot):
     def __init__(self, name: str, battery: int = 100, cleaning_mode: str = "vacuum"):
         super().__init__(name, battery)
         self.cleaning_mode = cleaning_mode
-
+    @log_action
     def perform_task(self, area_sqm: int = 20, **kwargs) -> str:
         # Cleaning consumes 1% battery per square meter
         battery_cost = area_sqm * 1

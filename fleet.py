@@ -154,3 +154,5 @@ if __name__ == "__main__":
     Robot.manufacturer = "RoboCorp Global"
     print(f"Updated Manufacturer (via Drone): {drone.manufacturer}")
     print(f"Updated Manufacturer (via Cleaner): {cleaner.manufacturer}")
+
+    # BAD COMMIT: Temporary debug comment for revert exercise

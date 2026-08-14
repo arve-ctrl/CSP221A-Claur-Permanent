@@ -145,3 +145,12 @@ if __name__ == "__main__":
     run_task_safely(cleaner, area_sqm=30)
 
     fleet_report(fleet)
+
+    # --- Demonstration of Class Attribute Modification ---
+    print("\n--- CLASS ATTRIBUTE DEMO ---")
+    print(f"Original Manufacturer: {Robot.manufacturer}")
+    
+    # Change the class attribute directly on the base class
+    Robot.manufacturer = "RoboCorp Global"
+    print(f"Updated Manufacturer (via Drone): {drone.manufacturer}")
+    print(f"Updated Manufacturer (via Cleaner): {cleaner.manufacturer}")

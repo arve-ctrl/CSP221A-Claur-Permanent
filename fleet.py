@@ -68,17 +68,13 @@ class Robot(abc.ABC):
     @abc.abstractmethod
     def perform_task(self, **kwargs):
         pass
-
-        if __name__ == "__main__":
-            print(f"Base Robot manufacturer: {Robot.manufacturer}")
-
             # --- 1.2 Concrete Subclasses ---
 class DroneRobot(Robot):
     """A flying robot subclass with altitude limits."""
 
     def __init__(self, name: str, battery: int = 100, max_altitude: int = 500):
         super().__init__(name, battery)
-        self.max_altitude = max_altitude  # Subclass-specific attribute
+        self.max_altitude = max_altitude
 
     def perform_task(self, altitude: int = 100, **kwargs) -> str:
         # Task costs 15% battery
@@ -89,10 +85,28 @@ class DroneRobot(Robot):
         return f"{self.name} flew to {target_alt}m altitude!"
 
 
+class CleaningRobot(Robot):
+    """A ground-based cleaning robot."""
+
+    def __init__(self, name: str, battery: int = 100, cleaning_mode: str = "vacuum"):
+        super().__init__(name, battery)
+        self.cleaning_mode = cleaning_mode
+
+    def perform_task(self, area_sqm: int = 20, **kwargs) -> str:
+        # Cleaning consumes 1% battery per square meter
+        battery_cost = area_sqm * 1
+        self.use_battery(battery_cost)
+        
+        return f"{self.name} cleaned {area_sqm}m² using {self.cleaning_mode} mode!"
+
 # --- Test Code at the Bottom ---
 if __name__ == "__main__":
+    # Test DroneRobot
     drone = DroneRobot(name="Aqua-Drone", battery=50, max_altitude=300)
-    print(str(drone))  # Output: Aqua-Drone (50% battery)
-    result = drone.perform_task(altitude=150)
-    print(result)      # Output: Aqua-Drone flew to 150m altitude!
-    print(str(drone))  # Output: Aqua-Drone (35% battery)
+    print(drone.perform_task(altitude=150))
+
+    # Test CleaningRobot
+    cleaner = CleaningRobot(name="Dust-E", battery=80, cleaning_mode="mop")
+    print(str(cleaner))
+    print(cleaner.perform_task(area_sqm=30))
+    print(str(cleaner))

@@ -113,14 +113,35 @@ class CleaningRobot(Robot):
         
         return f"{self.name} cleaned {area_sqm}m² using {self.cleaning_mode} mode!"
 
+# --- Utility Functions ---
+def run_task_safely(robot, **kwargs):
+    """Executes a task on a robot and safely handles InsufficientBatteryError."""
+    try:
+        return robot.perform_task(**kwargs)
+    except InsufficientBatteryError as e:
+        print(f"[ALERT] {e}")
+        return None
+
+def fleet_report(robots: list):
+    """Generates a summary report of all robots in the fleet."""
+    print("\n--- FLEET REPORT ---")
+    for r in robots:
+        print(r)
+    print("--------------------\n")
 # --- Test Code at the Bottom ---
 if __name__ == "__main__":
-    # Test DroneRobot
-    drone = DroneRobot(name="Aqua-Drone", battery=50, max_altitude=300)
-    print(drone.perform_task(altitude=150))
-
-    # Test CleaningRobot
+    drone = DroneRobot(name="Aqua-Drone", battery=10, max_altitude=300)
     cleaner = CleaningRobot(name="Dust-E", battery=80, cleaning_mode="mop")
-    print(str(cleaner))
-    print(cleaner.perform_task(area_sqm=30))
-    print(str(cleaner))
+
+    fleet = [drone, cleaner]
+    fleet_report(fleet)
+
+    # Attempt a task that requires more battery than the drone currently has
+    print("Attempting drone task with low battery...")
+    run_task_safely(drone, altitude=150)
+
+    # Attempt a task that succeeds
+    print("\nAttempting cleaner task...")
+    run_task_safely(cleaner, area_sqm=30)
+
+    fleet_report(fleet)
